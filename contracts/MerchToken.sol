@@ -11,8 +11,9 @@ contract MerchToken is ERC721, Ownable {
     /*** CONSTANTS ***/
     uint8 constant NAME_MIN_LENGTH = 1;
     uint8 constant NAME_MAX_LENGTH = 64;
-    string constant public merchTypes = "SHIRT,SOCKS,BACKPACK,PANTS,BRICK";
-    string constant public tags = "COOL,SICK,SEXY,CRINGE,CLOUTED,INSANE,COZY,SAD,LEGIT,GOBEARS";
+    string public constant merchTypes = "SHIRT,SOCKS,BACKPACK,PANTS,BRICK";
+    string public constant tags =
+        "COOL,SICK,SEXY,CRINGE,CLOUTED,INSANE,COZY,SAD,LEGIT,GOBEARS";
 
     /*** DATA S ***/
     struct MerchInfo {
@@ -64,12 +65,14 @@ contract MerchToken is ERC721, Ownable {
 
         // ***********TO DO:*************  Generate psedorandom numbers
         // by running blocktimestamp+address -> blackbox hashing function -> determine from last digit of result
-        bytes32 hash1 = 
-        bytes32 hash2 = 
+        // msg.sender -> gives us the user address
+        bytes32 hash1 =
+            sha256(abi.encode(block.timestamp + uint256(msg.sender)));
+        bytes32 hash2 = keccak256(abi.encode(hash1));
         uint256 result = uint256(hash2);
 
-        uint256 _merchType = 
-        uint256 _tag = 
+        uint256 _merchType = result % 10;
+        uint256 _tag = _merchType % 5;
 
         require(_tag <= 4, "Failed random check, ID too large");
         require(_merchType <= 9, "Failed random check, tagID too large");
@@ -87,7 +90,7 @@ contract MerchToken is ERC721, Ownable {
         });
 
         //*****TO:DO****** once a token is minted, tell the contract by changing one variable
-        
+        index += 1;
 
         emit MerchToken(msg.sender, index);
     }
@@ -140,7 +143,10 @@ contract MerchToken is ERC721, Ownable {
     //******TO DO************
     // Changes the price that must be paid to buy a particular token
     function changePrice(uint256 _tokenId, uint256 _newPrice) public {
-
+        require(_newPrice != 0);
+        require(_tokenId < index); // ensure token exists
+        require(ownerOf(_tokenId) == msg.sender);
+        tokenInfos[_tokenId].price = _newPrice;
     }
 
     // Allow a token to be sold
