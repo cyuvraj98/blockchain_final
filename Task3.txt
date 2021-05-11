@@ -1,0 +1,20 @@
+1. How is web3 used in componentDidMount? How does the user connect to the blockchain network? This is metamask!
+
+First, a web3 network provider and instance is obtained. Thereafter, web3 is used to get the user accounts. Then, a contract instance is
+obtained via a networkId. A network is then deployed via the networkId. Then, a new contract instance is created/obtained via the MerchantToken
+abi, deployed network and the address of the deployed network. I believe the web3 side of things is handled via metamask. Metamask is the
+user facing software that allows the user to connect to the blockchain network.
+
+2. Pick one function: fetchLoot, addLoot, or buyLoot and explain in detail what it is doing and how it works. Every line please!
+
+Function I will describe is buyLoot
+
+buyLoot takes an event as an argument and uses an arrow function (line 105). 
+this.state is deconstructed to retrieve the contract and accounts in the state (line 106).
+ev.preventDefault() is just to prevent default events from happening such as a page refresh when a submit button is clicked (line 108).
+An interim loading state is assigned to the current state (probably to notify the user on the frontend and also due to state management of components in React). (line 109).
+One of the contract methods, buyToken, is called to buy a token from a given account (accounts[0]) and of a certain price (this.state.buying.price) (lines 110 - 111).
+If the loot is successfully bought, the loot is fetched using the fetchLoot() function and the state's 'buying' attribute is set to null (lines 112-113).
+If the loot purchase fails, an alert is shown to the user ('Creating the token failed!') and the state's 'buying' attribute is still set to null. Note that the error is also displayed on the browser console for debugging purposes.
+
+End of Task 3!
